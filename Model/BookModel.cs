@@ -1,4 +1,6 @@
-﻿namespace Dewey_Decimal_System_Library.Model
+﻿using System;
+
+namespace Dewey_Decimal_System_Library.Model
 {
 
 

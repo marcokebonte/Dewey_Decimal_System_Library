@@ -1,4 +1,4 @@
-﻿using static Dewey_Decimal_System_Library.Other.Universal;
+﻿using Dewey_Decimal_System_Library.Other;
 
 namespace Dewey_Decimal_System_Library.Logic
 {
@@ -39,7 +39,7 @@ namespace Dewey_Decimal_System_Library.Logic
         // calculate score for game 2
         public static int CalculateScore(int timeLeft, int count)
         {
-            return ((count / 4) * 100) + Global.BonusPoints + timeLeft;
+            return ((count / 4) * 100) + Univ.BonusPoints + timeLeft;
         }
 
 
