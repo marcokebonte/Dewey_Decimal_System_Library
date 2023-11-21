@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Dewey_Decimal_System_Library.Model;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Dewey_Decimal_System_Library.Tree_Structure;
 
 namespace Dewey_Decimal_System_Library.JSON
 {
@@ -18,6 +19,8 @@ namespace Dewey_Decimal_System_Library.JSON
         public static string IdentifyingAreasCallNo = "IdentifyingAreasCallNo.json";
         public static string IdentifyingAreasFile = "IdentifyingAreasLeaderboard.json";
         public static string ReplacingBooksFile = "ReplacingBooksLeaderboard.json";
+        public static string TreeGameDataFile = "Tree.json";
+        public static string TreeHighScoreFile = "FindingCallNumbersLeaderboard.json";
 
 
 
@@ -135,6 +138,104 @@ namespace Dewey_Decimal_System_Library.JSON
         #endregion
 
 
+
+        #region Finding Call Numbers
+
+        //checks if the data file exists
+        public static bool TreeGameDataExists()
+        {
+            if (File.Exists(TreeHighScoreFile))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //checks if the score file exists
+        public static bool TreeGameScoresExists()
+        {
+            if (File.Exists(TreeHighScoreFile))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //creates a score file
+        public static void CreateJsonFileCallNumber()
+        {
+            // Specify a constant filename or generate dynamically as needed
+            string filename = TreeHighScoreFile;
+
+            // instantiate random object
+            Random rnd = new Random();
+
+            // initialise list with random pre-populated data
+            List<HighScoreModel> initializeHighScore = new List<HighScoreModel>()
+            {
+              new HighScoreModel("Trever", rnd.Next(1, 101)),
+              new HighScoreModel("Alex", rnd.Next(1, 101)),
+              new HighScoreModel("Phil", rnd.Next(1, 101)),
+              new HighScoreModel("Brendt", rnd.Next(1, 101)),
+              new HighScoreModel("Marta", rnd.Next(1, 101)),
+              new HighScoreModel("Raisa", rnd.Next(1, 101)),
+              new HighScoreModel("Sean", rnd.Next(1, 101)),
+              new HighScoreModel("Mary", rnd.Next(1, 101)),
+            };
+
+            // Serialize and write to the file
+            File.WriteAllText(filename, JsonSerializer.Serialize(initializeHighScore));
+          }
+
+
+        //creates the tree data
+        public static void CreateTreeDataFile()
+        {
+            //gets a tree from the generator file
+            Tree<DeweyPair> tree = MakeTree.GrowATree();
+
+            //well, this file cant be a one liner, for the sake of my sanity
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+
+            //make json string
+            string treeJSON = JsonSerializer.Serialize(tree, options);
+
+            //writes tree to file
+            using (StreamWriter sw = File.CreateText(TreeGameDataFile))
+            {
+                sw.WriteLine(treeJSON);
+            }
+        }
+
+        public static Tree<DeweyPair> GetTree()
+        {
+            return JsonSerializer.Deserialize<Tree<DeweyPair>>(File.ReadAllText(TreeGameDataFile));
+        }
+
+        //adds a new highscore to the score file
+        public static void AddTreeScore(HighScoreModel newScore)
+        {
+            List<HighScoreModel> highScores = GetTreeScores();
+
+            highScores.Add(newScore);
+
+            string scoreList = JsonSerializer.Serialize(highScores);
+
+            File.WriteAllText(TreeHighScoreFile, scoreList);
+        }
+
+        //gets the list of highscores
+        public static List<HighScoreModel> GetTreeScores()
+        {
+            return JsonSerializer.Deserialize<List<HighScoreModel>>(File.ReadAllText(TreeHighScoreFile));
+        }
+        #endregion
 
     }
 }
